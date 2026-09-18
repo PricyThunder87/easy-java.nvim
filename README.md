@@ -57,6 +57,10 @@ git clone https://github.com/noahsakko/easy-java ~/.local/share/nvim/site/pack/p
 
 No setup call required — the plugin auto-activates with defaults.
 
+## Demo
+
+https://github.com/user-attachments/assets/df7ed04a-5756-422f-a28e-c8a841439e4d
+
 ## Configuration
 
 ```lua
