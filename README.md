@@ -57,6 +57,10 @@ git clone https://github.com/PricyThunder87/easy-java.nvim ~/.local/share/nvim/s
 
 No setup call required — the plugin auto-activates with defaults.
 
+## Demo
+
+https://github.com/user-attachments/assets/df7ed04a-5756-422f-a28e-c8a841439e4d
+
 ## Configuration
 
 ```lua
