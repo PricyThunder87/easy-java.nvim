@@ -87,6 +87,11 @@ function M.scaffold(bufnr, opts)
     return
   end
 
+  local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+  if #lines > 1 or (#lines == 1 and lines[1] ~= "") then
+    return
+  end
+
   local roots = config.src_roots or { "src/main/java", "src" }
   local root, relpath = M.find_java_root(normalized, roots)
 
@@ -98,9 +103,9 @@ function M.scaffold(bufnr, opts)
   end
 
   local class_type = opts.class_type or M.detect_type(class_name)
-  local lines = M.generate_skeleton(pkg, class_name, class_type)
+  local skeleton = M.generate_skeleton(pkg, class_name, class_type)
 
-  vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
+  vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, skeleton)
   vim.bo[bufnr].modified = false
 end
 

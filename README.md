@@ -87,15 +87,20 @@ If no root is found, `default_package` is used.
 
 ## Compatibility
 
-Works with any file creation mechanism that triggers Neovim's `BufNewFile` event:
+Works with any file creation mechanism:
 
-- **mini.files** — create file via `f` key
+- **mini.files** — create file via its file creation UI
 - **snacks explorer** — create file via its file creation UI
 - **oil.nvim** — write buffer after adding a new entry
 - **netrw** — `:Explore` and `%` to create
 - **neo-tree** — create file via its UI
 - **`:e path/to/NewFile.java`** — direct command
 - **`vim.cmd("edit ...")`** from any plugin
+
+The plugin uses multiple Neovim events for broad compatibility:
+- `BufNewFile` — standard Neovim file creation
+- `BufReadPost` — catches files opened by oil.nvim/mini.files after creation
+- `MiniFilesActionCreate` — mini.files-specific event for file creation
 
 ## License
 

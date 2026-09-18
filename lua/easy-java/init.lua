@@ -38,6 +38,46 @@ function M.setup(opts)
       end)
     end,
   })
+
+  vim.api.nvim_create_autocmd("BufReadPost", {
+    group = group,
+    pattern = "*.java",
+    desc = "EasyJava: scaffold empty Java buffers (oil.nvim/mini.files compat)",
+    callback = function(args)
+      vim.schedule(function()
+        local bufnr = args.buf
+        if not vim.api.nvim_buf_is_valid(bufnr) then
+          return
+        end
+        local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+        if #lines == 0 or (#lines == 1 and lines[1] == "") then
+          require("easy-java")._on_new_file(bufnr)
+        end
+      end)
+    end,
+  })
+
+  vim.api.nvim_create_autocmd("User", {
+    group = group,
+    pattern = "MiniFilesActionCreate",
+    desc = "EasyJava: scaffold files created via mini.files",
+    callback = function(args)
+      local path = args.data
+      if type(path) == "table" then
+        path = path.to or path.from
+      end
+      if path and tostring(path):match("%.java$") then
+        vim.schedule(function()
+          local bufnr = vim.fn.bufadd(tostring(path))
+          if bufnr and bufnr > 0 and vim.api.nvim_buf_is_valid(bufnr) then
+            vim.api.nvim_buf_call(bufnr, function()
+              require("easy-java")._on_new_file(bufnr)
+            end)
+          end
+        end)
+      end
+    end,
+  })
 end
 
 --- Internal handler for BufNewFile. Wraps scaffold in pcall for safety.
@@ -46,6 +86,10 @@ function M._on_new_file(bufnr)
   if not vim.api.nvim_buf_is_valid(bufnr) then
     return
   end
+  if vim.b[bufnr]._easy_java_scaffolded then
+    return
+  end
+  vim.b[bufnr]._easy_java_scaffolded = true
   local ok, err = pcall(require("easy-java.scaffold").scaffold, bufnr)
   if not ok then
     vim.notify("[easy-java] scaffold error: " .. tostring(err), vim.log.levels.WARN)
